@@ -1,0 +1,68 @@
+doctype 5
+html
+  head
+    style(type='text/css')
+      body { font-family: Tahoma; }
+      dt { margin-left: 0em; margin-top: 0.5em; font-weight: bold; }
+      dd { margin-left: 0em; color: #444; }
+    script(src='http://code.jquery.com/jquery-1.6.1.min.js')
+    script(src='/socket.io/socket.io.js')
+    script
+      var socket = io.connect();
+
+      socket.on('message', function(from, body) {
+        body = body.replace(/</g, '&lt;');
+        body = body.replace(/>/g, '&gt;');
+        body = body.replace(/\\n/g, '<br />');
+
+        from = from.replace(/.*\\//, '');
+
+        $('#messages').append('<dt>'+from+'</dt>');
+        $('#messages').append('<dd>'+body+'</dd>');
+      });
+
+      $(function() {
+        $('#messages').hide();
+        $('#messageForm').hide();
+
+        $('#loginForm').submit(function() {
+          var jid = $('#jid').val();
+          var password = $('#password').val();
+          var room = $('#room').val();
+          var nick = $('#nick').val();
+
+          $('#loginForm').hide();
+          $('#messages').show();
+          $('#messageForm').show();
+
+          socket.emit('login', jid, password, room, nick);
+          return false;
+        });
+
+        $('#messageForm').submit(function() {
+          socket.emit('sendmessage', $('#message').val());
+          return false;
+        });
+      });
+  body
+    form#loginForm
+      dl
+        dt jabber-id
+        dd
+          input(value='jbot@joshu.net')#jid
+        dt password
+        dd
+          input(type='password',value='jbotpassword')#password
+        dt chatroom
+        dd
+          input(value='bowels@conference.vmx9155.hosting24.com.au')#room
+        dt nick
+        dd
+          input(value='jbot')#nick
+        dd
+          button Login
+    dl#messages
+    form#messageForm
+      input#message
+      button Send
+
