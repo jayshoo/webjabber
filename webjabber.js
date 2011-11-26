@@ -68,7 +68,8 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('disconnect', function() {
     socket.get('info', function(err, info) {
-      info.client.end();
+      if (info !== null && info.client !== null)
+        info.client.end();
     });
   });
 
