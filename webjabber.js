@@ -11,10 +11,13 @@ app.configure(function() {
   app.use(express.static(__dirname + '/static'));
   app.set('views', __dirname);
   app.set('view engine', 'jade');
+  app.set('view options', {
+    layout: false
+  });
 });
 
 app.get('/', function(req, res) {
-  res.render('index', { layout: false });
+  res.render('index', { config: config });
 });
 
 
