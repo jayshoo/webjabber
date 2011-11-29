@@ -3,7 +3,7 @@ html
   head
     style(type='text/css')
       body { font-family: Tahoma; }
-      dt { margin-left: 0em; margin-top: 0.5em; font-weight: bold; }
+      dt { margin-left: 0em; margin-top: 0.5em; font-weight: bold; background: #ccc; }
       dd { margin-left: 0em; color: #444; }
     script(src='http://code.jquery.com/jquery-1.6.1.min.js')
     script(src='/socket.io/socket.io.js')
@@ -14,6 +14,15 @@ html
         body = body.replace(/</g, '&lt;');
         body = body.replace(/>/g, '&gt;');
         body = body.replace(/\\n/g, '<br />');
+
+        var imgurRE = /(http:\\/\\/i\\.imgur\\.com\\/.*?\\.(jpg|png|gif))/gi;
+        body = body.replace(imgurRE, '<img src="$1" />');
+
+        var youtubeRE = /http:\\/\\/(?:www\\.)?(?:youtube\\.com\\/watch\\?).*v=(.*)(?:&|$)/;
+        body = body.replace(youtubeRE,
+          '<iframe width="640" height="360" ' +
+          'src="http://www.youtube.com/embed/$1" ' +
+          'frameborder="0" allowfullscreen></iframe>');
 
         from = from.replace(/.*\\//, '');
 
