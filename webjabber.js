@@ -1,11 +1,11 @@
-// http://xmpp.org/extensions/xep-0045.html
 var xmpp = require('node-xmpp');
 var express = require('express');
 var app = express.createServer();
 var io = require('socket.io').listen(app);
 
+var config = require('./config');
 
-app.listen(8000);
+app.listen(config.webPort);
 
 app.configure(function() {
   app.use(express.static(__dirname + '/static'));
@@ -20,10 +20,10 @@ app.get('/', function(req, res) {
 
 io.sockets.on('connection', function(socket) {
 
-  socket.on('login', function(jid, password, room, nick) {
+  socket.on('login', function(nick) {
     var client = new xmpp.Client({
-      jid: jid,
-      password: password
+      jid: config.jabberId,
+      password: config.jabberPassword
     });
     client.on('error', function(error) {
       console.log(error);
@@ -31,7 +31,7 @@ io.sockets.on('connection', function(socket) {
     });
     client.on('online', function() {
       client.send(new xmpp.Element('presence', {
-        to: room+'/'+nick
+        to: config.jabberConference+'/'+nick
       }));
     });
     client.on('stanza', function(stanza) {
@@ -47,9 +47,6 @@ io.sockets.on('connection', function(socket) {
 
     socket.set('info', {
       client: client,
-      jid: jid,
-      password: password,
-      room: room,
       nick: nick
     });
   });
@@ -57,8 +54,8 @@ io.sockets.on('connection', function(socket) {
   socket.on('sendmessage', function(text) {
     socket.get('info', function(err, info) {
       var msg = new xmpp.Element('message', {
-        from: info.from,
-        to: info.room,
+        from: config.jabberId,
+        to: config.jabberConference,
         type: 'groupchat'
       }).c('body').t(text);
 
@@ -74,27 +71,4 @@ io.sockets.on('connection', function(socket) {
   });
 
 });
-
-
-/*
-cl.on('stanza', function(stanza) {
-  if (stanza.is('message')
-    && stanza.attrs.type !== 'error'
-    && stanza.attrs.from !== conferenceMe
-    && stanza.getChild('delay') == undefined) {
-
-    var body = stanza.getChildText('body');
-
-    var msg = new xmpp.Element('message', {
-      from: me,
-      to: room,
-      type: 'groupchat'
-    }).c('body').t(body);
-
-    cl.send(msg);
-  }
-});
-*/
-
-
 

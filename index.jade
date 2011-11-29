@@ -26,16 +26,13 @@ html
         $('#messageForm').hide();
 
         $('#loginForm').submit(function() {
-          var jid = $('#jid').val();
-          var password = $('#password').val();
-          var room = $('#room').val();
           var nick = $('#nick').val();
 
           $('#loginForm').hide();
           $('#messages').show();
           $('#messageForm').show();
 
-          socket.emit('login', jid, password, room, nick);
+          socket.emit('login', nick);
           return false;
         });
 
@@ -47,18 +44,9 @@ html
   body
     form#loginForm
       dl
-        dt jabber-id
-        dd
-          input(value='jbot@joshu.net')#jid
-        dt password
-        dd
-          input(type='password',value='jbotpassword')#password
-        dt chatroom
-        dd
-          input(value='bowels@conference.vmx9155.hosting24.com.au')#room
         dt nick
         dd
-          input(value='jbot')#nick
+          input#nick
         dd
           button Login
     dl#messages
