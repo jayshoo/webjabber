@@ -30,6 +30,10 @@ html
 
         $('#messages').append('<dt>'+from+'</dt>');
         $('#messages').append('<dd>'+body+'</dd>');
+
+        if (scrollY > document.height - 2000) {
+          scrollTo(0, document.height);
+        }
       });
 
       $(function() {
