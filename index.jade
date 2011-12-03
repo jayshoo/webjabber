@@ -5,20 +5,22 @@ html
       body { font-family: Tahoma; }
       dt { margin-left: 0em; margin-top: 0.5em; font-weight: bold; background: #ccc; }
       dd { margin-left: 0em; color: #444; }
+      img { max-width: 640px; }
     script(src='http://code.jquery.com/jquery-1.6.1.min.js')
     script(src='/socket.io/socket.io.js')
     script
       var socket = io.connect('http://#{config.webHost}:#{config.webPort}/');
+      var imgRE = /(http[s]*:\\/.*?\\.(jpg|png|gif))/gi;
+      var imgurRE = /http:\\/\\/(?:www\\.)?imgur\\.com\\/(.*)(?:\\b)/gi;
+      var youtubeRE = /http:\\/\\/(?:www\\.)?(?:youtube\\.com\\/watch\\?).*v=(.*)(?:&|$)/;
 
       socket.on('message', function(from, body) {
         body = body.replace(/</g, '&lt;');
         body = body.replace(/>/g, '&gt;');
         body = body.replace(/\\n/g, '<br />');
 
-        var imgurRE = /(http:\\/\\/i\\.imgur\\.com\\/.*?\\.(jpg|png|gif))/gi;
-        body = body.replace(imgurRE, '<img src="$1" />');
-
-        var youtubeRE = /http:\\/\\/(?:www\\.)?(?:youtube\\.com\\/watch\\?).*v=(.*)(?:&|$)/;
+        body = body.replace(imgRE, '<img src="$1" />');
+        body = body.replace(imgurRE, '<img src="http://i.imgur.com/$1.jpg" />');
         body = body.replace(youtubeRE,
           '<iframe width="640" height="360" ' +
           'src="http://www.youtube.com/embed/$1" ' +
