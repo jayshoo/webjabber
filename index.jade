@@ -47,6 +47,7 @@ html
 
         $('#messageForm').submit(function() {
           socket.emit('sendmessage', $('#message').val());
+          $('#message').val('');
           return false;
         });
       });
