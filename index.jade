@@ -1,7 +1,7 @@
 doctype 5
 html
   head
-    link(rel='icon',href='/james.png',sizes='48x48')
+    link(rel='icon',href='/icon.png',sizes='48x48')
     style(type='text/css')
       body { font-family: Tahoma; }
       dt { margin-left: 0em; margin-top: 0.5em; font-weight: bold; background: #ccc; }
@@ -43,7 +43,7 @@ html
         if (!focussed && notif && notif.checkPermission() == 0) {
           if (popup) popup.cancel(); 
           popup = notif.createNotification(
-            '/james.png',
+            '/icon.png',
             from,
             body);
           popup.show();
