@@ -70,7 +70,7 @@ html
           'frameborder="0" allowfullscreen></iframe>');
 
         if (from != lastFrom ) {
-          var fromImg = "<img class='color' style='background: #"+fromColor+";' />";
+          var fromImg = '<img class="color" style="background: #'+fromColor+';" />';
           $('#messages').append('<dt>'+fromImg+from+'</dt>');
           lastFrom = from;
         }
@@ -114,12 +114,22 @@ html
           input#nick
         dd
           button Login
+        dt WARNING
+        dd
+          | this service is unencrypted; any messages you receive
+          | or send may be intercepted, read and altered in transit
         dt newest new things
         dd desktop notifications in chrome
         dd automatic scroll to input on keypress
-        dd team rocket icon for chromeapp
+        dd fixed scroll for dd (and dd only)
+        dd a cute lemur
+        dd vimeo support
+        dd youtu.be support
         dt todo
-        dd icon with fewer mammaries
+        dd
+          | accidentally create the first self-aware AI inside psimyn's
+          | robot while trying to hook it up to bowels chat
+        dd add https support
     dl#messages
     form#messageForm
       input#message
