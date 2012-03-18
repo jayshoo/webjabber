@@ -18,8 +18,10 @@ html
       var imgRE = /(http[s]*:\\/.*?\\.(jpg|png|gif))/gi;
       var imgurRE = /http:\\/\\/(?:www\\.)?imgur\\.com\\/(.*)(?:\\b)/gi;
       var youtubeRE = /http:\\/\\/(?:www\\.)?(?:youtube\\.com\\/watch\\?).*v=(.*)(?:&|$)/;
+      var youshareRE = /http:\\/\\/(?:youtu\\.be\\/)(.*)(?:&|$)/;
 
       var popup;
+      var lastFrom;
       var focussed = true;
 
       $(window).focus(function() {
@@ -57,9 +59,16 @@ html
           '<iframe width="640" height="360" ' +
           'src="http://www.youtube.com/embed/$1" ' +
           'frameborder="0" allowfullscreen></iframe>');
+        body = body.replace(youshareRE,
+          '<iframe width="640" height="360" ' +
+          'src="http://www.youtube.com/embed/$1" ' +
+          'frameborder="0" allowfullscreen></iframe>');
 
-        var fromImg = "<img class='color' style='background: #"+fromColor+";' />";
-        $('#messages').append('<dt>'+fromImg+from+'</dt>');
+        if (from != lastFrom ) {
+          var fromImg = "<img class='color' style='background: #"+fromColor+";' />";
+          $('#messages').append('<dt>'+fromImg+from+'</dt>');
+          lastFrom = from;
+        }
         $('#messages').append('<dd>'+body+'</dd>');
 
         if (scrollY > document.height - 2000) {
