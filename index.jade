@@ -7,8 +7,10 @@ html
       dt { margin-left: 0em; margin-top: 0.5em; font-weight: bold; background: #ccc; }
       dd { margin-left: 0em; color: #444; }
       img { max-width: 640px; }
+      img.color { width: 1em; height: 0.8em; }
     script(src='http://code.jquery.com/jquery-1.6.1.min.js')
     script(src='/socket.io/socket.io.js')
+    script(src='http://crypto-js.googlecode.com/files/2.5.3-crypto-md5.js')
     script
       var notif = window.webkitNotifications;
       var socket = io.connect('http://#{config.webHost}:#{config.webPort}/');
@@ -33,6 +35,8 @@ html
 
       socket.on('message', function(from, body) {
         from = from.replace(/.*\\//, '');
+        var fromColor = Crypto.MD5(from, { asBytes: true });
+        fromColor = Crypto.util.bytesToHex(fromColor).substr(0, 6);
 
         if (!focussed && notif && notif.checkPermission() == 0) {
           if (popup) popup.cancel(); 
@@ -54,7 +58,8 @@ html
           'src="http://www.youtube.com/embed/$1" ' +
           'frameborder="0" allowfullscreen></iframe>');
 
-        $('#messages').append('<dt>'+from+'</dt>');
+        var fromImg = "<img class='color' style='background: #"+fromColor+";' />";
+        $('#messages').append('<dt>'+fromImg+from+'</dt>');
         $('#messages').append('<dd>'+body+'</dd>');
 
         if (scrollY > document.height - 2000) {
