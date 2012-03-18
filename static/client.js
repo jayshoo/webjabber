@@ -6,6 +6,7 @@ var imgurRE = /http:\/\/(?:www\.)?imgur\.com\/(.*)(?:\b)/gi;
 var youtubeRE = /http:\/\/(?:www\.)?(?:youtube\.com\/watch\?).*v=(.*)(?:&|$)/;
 var youshareRE = /http:\/\/(?:youtu\.be\/)(.*)(?:&|$)/;
 var vimeoRE = /http:\/\/(?:www\.)?vimeo\.com\/(\d*)/;
+var linkRE = /(>[^<]*?)?(http[s]*:\/\/[^"\s<]*)/;
 
 var popup;
 var lastFrom;
@@ -42,20 +43,28 @@ socket.on('message', function(from, body) {
   body = body.replace(/>/g, '&gt;');
   body = body.replace(/\n/g, '<br />');
 
-  body = body.replace(imgRE, '<img src="$1" />');
-  body = body.replace(imgurRE, '<img src="http://i.imgur.com/$1.jpg" />');
+  body = body.replace(imgRE, '<div class="media"><img src="$1" /></div>');
+  body = body.replace(imgurRE, '<div class="media"><img src="http://i.imgur.com/$1.jpg" /></div>');
   body = body.replace(youtubeRE,
+    '<div class="media">' +
     '<iframe width="640" height="360" ' +
     'src="http://www.youtube.com/embed/$1" ' +
-    'frameborder="0" allowfullscreen></iframe>');
+    'frameborder="0" allowfullscreen></iframe>' +
+    '</div>');
   body = body.replace(youshareRE,
+    '<div class="media">' +
     '<iframe width="640" height="360" ' +
     'src="http://www.youtube.com/embed/$1" ' +
-    'frameborder="0" allowfullscreen></iframe>');
+    'frameborder="0" allowfullscreen></iframe>' +
+    '</div>');
   body = body.replace(vimeoRE,
+    '<div class="media">' +
     '<iframe width="640" height="360" ' +
     'src="http://player.vimeo.com/video/$1" ' +
-    'frameborder="0" allowfullscreen></iframe>');
+    'frameborder="0" allowfullscreen></iframe>' +
+    '</div>');
+  body = body.replace(linkRE,
+    '$1<a href="$2">$2</a>');
 
   if (from != lastFrom ) {
     var fromImg = '<img class="color" style="background: #'+fromColor+';" />';
