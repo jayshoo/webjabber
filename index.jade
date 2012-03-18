@@ -19,6 +19,7 @@ html
       var imgurRE = /http:\\/\\/(?:www\\.)?imgur\\.com\\/(.*)(?:\\b)/gi;
       var youtubeRE = /http:\\/\\/(?:www\\.)?(?:youtube\\.com\\/watch\\?).*v=(.*)(?:&|$)/;
       var youshareRE = /http:\\/\\/(?:youtu\\.be\\/)(.*)(?:&|$)/;
+      var vimeoRE = /http:\\/\\/(?:www\\.)?vimeo\\.com\\/(\\d*)/;
 
       var popup;
       var lastFrom;
@@ -62,6 +63,10 @@ html
         body = body.replace(youshareRE,
           '<iframe width="640" height="360" ' +
           'src="http://www.youtube.com/embed/$1" ' +
+          'frameborder="0" allowfullscreen></iframe>');
+        body = body.replace(vimeoRE,
+          '<iframe width="640" height="360" ' +
+          'src="http://player.vimeo.com/video/$1" ' +
           'frameborder="0" allowfullscreen></iframe>');
 
         if (from != lastFrom ) {
