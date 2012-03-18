@@ -1,11 +1,11 @@
 var notif = window.webkitNotifications;
 var socket = io.connect('http://#{config.webHost}:#{config.webPort}/');
 
-var imgRE = /(http[s]*:\\/.*?\\.(jpg|png|gif))/gi;
-var imgurRE = /http:\\/\\/(?:www\\.)?imgur\\.com\\/(.*)(?:\\b)/gi;
-var youtubeRE = /http:\\/\\/(?:www\\.)?(?:youtube\\.com\\/watch\\?).*v=(.*)(?:&|$)/;
-var youshareRE = /http:\\/\\/(?:youtu\\.be\\/)(.*)(?:&|$)/;
-var vimeoRE = /http:\\/\\/(?:www\\.)?vimeo\\.com\\/(\\d*)/;
+var imgRE = /(http[s]*:\/.*?\.(jpg|png|gif))/gi;
+var imgurRE = /http:\/\/(?:www\.)?imgur\.com\/(.*)(?:\b)/gi;
+var youtubeRE = /http:\/\/(?:www\.)?(?:youtube\.com\/watch\?).*v=(.*)(?:&|$)/;
+var youshareRE = /http:\/\/(?:youtu\.be\/)(.*)(?:&|$)/;
+var vimeoRE = /http:\/\/(?:www\.)?vimeo\.com\/(\d*)/;
 
 var popup;
 var lastFrom;
@@ -23,7 +23,9 @@ $(window).focus(function() {
 });
 
 socket.on('message', function(from, body) {
-  from = from.replace(/.*\\//, '');
+  if (!body) return;
+
+  from = from.replace(/.*\//, '');
   var fromColor = Crypto.MD5(from, { asBytes: true });
   fromColor = Crypto.util.bytesToHex(fromColor).substr(0, 6);
 
@@ -38,7 +40,7 @@ socket.on('message', function(from, body) {
 
   body = body.replace(/</g, '&lt;');
   body = body.replace(/>/g, '&gt;');
-  body = body.replace(/\\n/g, '<br />');
+  body = body.replace(/\n/g, '<br />');
 
   body = body.replace(imgRE, '<img src="$1" />');
   body = body.replace(imgurRE, '<img src="http://i.imgur.com/$1.jpg" />');
