@@ -1,6 +1,7 @@
 doctype 5
 html
   head
+    link(rel='icon',href='/james.png',sizes='48x48')
     style(type='text/css')
       body { font-family: Tahoma; }
       dt { margin-left: 0em; margin-top: 0.5em; font-weight: bold; background: #ccc; }
@@ -9,12 +10,39 @@ html
     script(src='http://code.jquery.com/jquery-1.6.1.min.js')
     script(src='/socket.io/socket.io.js')
     script
+      var notif = window.webkitNotifications;
       var socket = io.connect('http://#{config.webHost}:#{config.webPort}/');
+
       var imgRE = /(http[s]*:\\/.*?\\.(jpg|png|gif))/gi;
       var imgurRE = /http:\\/\\/(?:www\\.)?imgur\\.com\\/(.*)(?:\\b)/gi;
       var youtubeRE = /http:\\/\\/(?:www\\.)?(?:youtube\\.com\\/watch\\?).*v=(.*)(?:&|$)/;
 
+      var popup;
+      var focussed = true;
+
+      $(window).focus(function() {
+        focussed = true;
+        if (popup) popup.cancel();
+      }).blur(function() {
+        focussed = false;
+      }).keydown(function(e) {
+        if (e.which >= 48) {
+          $('#message').focus();
+        }
+      });
+
       socket.on('message', function(from, body) {
+        from = from.replace(/.*\\//, '');
+
+        if (!focussed && notif && notif.checkPermission() == 0) {
+          if (popup) popup.cancel(); 
+          popup = notif.createNotification(
+            '/james.png',
+            from,
+            body);
+          popup.show();
+        }
+
         body = body.replace(/</g, '&lt;');
         body = body.replace(/>/g, '&gt;');
         body = body.replace(/\\n/g, '<br />');
@@ -25,8 +53,6 @@ html
           '<iframe width="640" height="360" ' +
           'src="http://www.youtube.com/embed/$1" ' +
           'frameborder="0" allowfullscreen></iframe>');
-
-        from = from.replace(/.*\\//, '');
 
         $('#messages').append('<dt>'+from+'</dt>');
         $('#messages').append('<dd>'+body+'</dd>');
@@ -41,6 +67,10 @@ html
         $('#messageForm').hide();
 
         $('#loginForm').submit(function() {
+          if (notif && notif.checkPermission() != 0) {
+            notif.requestPermission();
+          }
+
           var nick = $('#nick').val();
 
           $('#loginForm').hide();
@@ -65,6 +95,12 @@ html
           input#nick
         dd
           button Login
+        dt newest new things
+        dd desktop notifications in chrome
+        dd automatic scroll to input on keypress
+        dd team rocket icon for chromeapp
+        dt todo
+        dd icon with fewer mammaries
     dl#messages
     form#messageForm
       input#message
